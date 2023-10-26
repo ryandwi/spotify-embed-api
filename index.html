@@ -1,0 +1,91 @@
+<html lang="en">
+
+<head>
+    <title>A Spotify Embed Example</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        .episodes {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .episode {
+            min-width: max-content;
+            margin-bottom: .8rem;
+            padding: .8rem 1rem;
+            border-radius: 10px;
+            border: 0;
+            background: #191414;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .episode:hover {
+            background: #1Db954;
+        }
+
+        @media screen and (min-width: 860px) {
+            body {
+                display: flex;
+                flex-direction: row;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="episodes">
+        <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit.</h3>
+        <button class="episode" data-embed="embed-1" data-spotify-id="spotify:track:3rUGC1vUpkDG9CZFHMur1t">
+            Open in spotify
+        </button>
+        <div id="embed-1"></div>
+
+        <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit.</h3>
+        <button class="episode" data-embed="embed-2" data-spotify-id="spotify:track:7l9IqDtVWJurTvkQHq1BGh">
+            Open in spotify
+        </button>
+        <div id="embed-2"></div>
+
+        <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit.</h3>
+        <button class="episode" data-embed="embed-3" data-spotify-id="spotify:track:7l97ElWmIdVHWUaOeeU5ZC">
+            Open in spotify
+        </button>
+        <div id="embed-3"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+        integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://open.spotify.com/embed/iframe-api/v1" async>
+    </script>
+    <script>
+        window.onSpotifyIframeApiReady = function (IFrameAPI) {
+            let activeController = null;
+
+            $(document).on("click", ".episode", function() {
+                const element = document.getElementById(`${$(this).data("embed")}`); 
+                const spotifyId = $(this).data("spotify-id");
+
+                if (activeController) {
+                    activeController.destroy();
+                }  
+                const options = {
+                    width: '100%',
+                    height: '100',
+                };
+
+                $(this).after(`<div id="${$(this).data("embed")}"></div>`);
+                const callback = (EmbedController) => {
+                    EmbedController.loadUri(spotifyId);
+                    EmbedController.play();
+                    activeController = EmbedController;
+                };
+
+                IFrameAPI.createController(element, options, callback);
+            });
+        } 
+    </script>
+</body>
+</html>
